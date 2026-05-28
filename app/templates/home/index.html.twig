@@ -1,7 +1,85 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}SAFESERV{% endblock %}
-
+{% block title %}
+    SAFESERV
+{% endblock %}
 {% block body %}
+
+    <div class="p-4 mb-3 text-center fs-5">
+        <span class="badge bg-success bg-opacity-25 text-success border-success border-opacity-25 font-monospace mb-3">
+            HACCP . Restauration collective . Traçabilité
+        </span>
+        <h1 class="display-5 fw-semibold text-light">
+            Tracabilité des températures<br>
+            <strong class="fw-semibold">
+                numerisée et sans friction  
+            </strong>
+        </h1>
+        <p>
+            safeserv remplace le cahier papier HACCP.<br>
+            saisie en cuisine, conformité en temps réel, alertes instantanées.
+        </p>
+    </div>
+
+    <div class="container">
+
+        <div class="text-center mb-4">
+            <p class="text-success font-monospace small text-uppercase">
+                Deux rôles
+            </p>
+            <h2 class="fw-normal fs-4">
+                Un outil adapté à chacun
+            </h2>
+        </div>
+
+        <div class="row gy-4 justify-content-center">
+
+            <div class="col-12 col-sm-10 col-md-6 col-lg-5">
+                <div class="card border-warning h-100">
+                    <div class="card-header">
+                        🧑‍🍳
+                        <span class="text-warning font-monospace small text-uppercase">
+                            ROLES CUISINIER
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        {% for item in [
+                            'Voir le planning de la semaine',
+                            'Saisir les 3 températures par plat',
+                            'Voir le statut conforme / non conforme',
+                            'Consulter son historique de relevés',
+                        ] %}
+                            <li class="py-1 border-bottom border-secondary border-opacity-25">
+                                <span class="text-warning me-2">→</span>{{ item }}
+                            </li>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-10 col-md-6 col-lg-5">
+                <div class="card border-info h-100">
+                    <div class="card-header">
+                        🥗
+                        <span class="text-info font-monospace small text-uppercase">
+                            ROLES NUTRITIONISTE
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        {% for item in [
+                            'Gérer le catalogue de plats',
+                            'Créer et modifier le planning semaine',
+                            'Tableau de bord des relevés du jour',
+                        ] %}
+                            <li class="py-1 border-bottom border-secondary border-opacity-25">
+                                <span class="text-success me-2">→</span>{{ item }}
+                            </li>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
 
 {% endblock %}
