@@ -3,21 +3,18 @@
     <a class="navbar-brand" href="{{ path('app_home') }}">
       <span style="color: #28a745;">safe</span><span style="color: white;">serv</span>
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarColor01">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarColor01">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link" href="#">Administration</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link" href="#">Documentation</a>
         </li>
       </ul>
-      <a href="{{ path('app_home') }}" class="btn btn-outline-success">
-    Connexion
-    </a>
+      <a href="{{ path('app_login') }}" class="btn btn-outline-success">
+        Connexion
+      </a>
     </div>
   </div>
 </nav>
