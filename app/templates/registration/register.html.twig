@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+{% form_theme registrationForm 'bootstrap_5_layout.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+
+    <h1 class="text-center">Enregistrer</h1>
+
+<div class="d-flex justify-content-center text-center">
+
+    {{ form_errors(registrationForm) }}
+
+    {{ form_start(registrationForm) }}
+        {{ form_row(registrationForm.nom) }}
+        {{ form_row(registrationForm.email) }}
+        {{ form_row(registrationForm.plainPassword, {
+            label: 'Mots de passe'
+        }) }}
+        {{ form_row(registrationForm.agreeTerms) }}
+        <button type="submit" class="btn btn-outline-success btn-sm border-secondary">Enregistrer</button>
+    {{ form_end(registrationForm) }}
+</div>
+{% endblock %}
+
+
+   
