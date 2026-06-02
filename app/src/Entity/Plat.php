@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\PlatRepository;
@@ -19,6 +18,11 @@ class Plat
     #[ORM\Column(length: 50)]
     private ?string $type = null;
 
+    public function __toString(): string
+    {
+        return $this->nom ?? '';
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -27,7 +31,6 @@ class Plat
     public function setId(string $id): static
     {
         $this->id = $id;
-
         return $this;
     }
 
@@ -39,7 +42,6 @@ class Plat
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -51,7 +53,6 @@ class Plat
     public function setType(string $type): static
     {
         $this->type = $type;
-
         return $this;
     }
 }

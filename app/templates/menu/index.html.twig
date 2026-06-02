@@ -1,20 +1,61 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello MenuController!{% endblock %}
+{% block title %}Menu de la semaine{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/var/www/html/src/Controller/MenuController.php</code></li>
-        <li>Your template at <code>/var/www/html/templates/menu/index.html.twig</code></li>
-    </ul>
+<div class="d-flex justify-content-center align-items-center mb-3 ">
+  <h4 class="mb-0 ">Menu de la semaine</h4>
+  <a href="{{ path('app_menu_new') }}" class="btn btn-sm btn-success ms-2">+ Ajouter un menu</a>
 </div>
+
+<ul class="nav nav-tabs" role="tablist">
+  {% set jours = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'] %}
+  {% for jour in jours %}
+  <li class="nav-item" role="presentation">
+    <a class="nav-link {{ loop.first ? 'active' : '' }}" data-bs-toggle="tab" href="#{{ jour }}" role="tab">
+      {{ jour|capitalize }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+
+<div class="tab-content mt-3 w-50">
+  {% set jours_num = {'lundi': 1, 'mardi': 2, 'mercredi': 3, 'jeudi': 4, 'vendredi': 5} %}
+  {% for jour, num in jours_num %}
+  <div class="tab-pane fade {{ loop.first ? 'show active' : '' }}" id="{{ jour }}" role="tabpanel">
+
+    {% set menu_du_jour = null %}
+    {% for m in menu %}
+      {% if m.servedAt.format('N')|number_format == num %}
+        {% set menu_du_jour = m %}
+      {% endif %}
+    {% endfor %}
+
+    {% if menu_du_jour %}
+      <div class="list-group-item alert-secondary rounded p-3">
+        {% if menu_du_jour.platsByType('entree') is not empty %}
+          <p class="mb-1"><strong>🥗 Entrée :</strong>
+            {% for p in menu_du_jour.platsByType('entree') %}{{ p.nom }}{% if not loop.last %}, {% endif %}{% endfor %}
+          </p>
+        {% endif %}
+        {% if menu_du_jour.platsByType('plat') is not empty %}
+          <p class="mb-1"><strong>🍽️ Plat :</strong>
+            {% for p in menu_du_jour.platsByType('plat') %}{{ p.nom }}{% if not loop.last %}, {% endif %}{% endfor %}
+          </p>
+        {% endif %}
+        {% if menu_du_jour.platsByType('dessert') is not empty %}
+          <p class="mb-0"><strong>🍰 Dessert :</strong>
+            {% for p in menu_du_jour.platsByType('dessert') %}{{ p.nom }}{% if not loop.last %}, {% endif %}{% endfor %}
+          </p>
+        {% endif %}
+      </div>
+    {% else %}
+      <p class="text-muted fst-italic">Aucun menu pour ce jour.</p>
+    {% endif %}
+
+  </div>
+  {% endfor %}
+</div>
+
 {% endblock %}
