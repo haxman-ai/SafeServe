@@ -40,6 +40,13 @@
                     </a>
                 </div>
             {% endif %}
+               {% if is_granted('ROLE_USER') %}
+                <div class="d-flex">
+                    <a href="{{ path('app_temp') }}" class="btn btn-outline-success btn-sm ms-2">
+                        Temperatures
+                    </a>
+                </div>
+            {% endif %}
 
             {% if is_granted('ROLE_ADMIN') %}
                 <div class="d-flex">

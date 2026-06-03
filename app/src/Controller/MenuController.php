@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Entity\Menu;
+use App\Entity\Plat;
 use App\Form\MenuType;
 use App\Repository\MenuRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,10 +18,8 @@ final class MenuController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $menu = $menuRepository->findAll();
-
         return $this->render('menu/index.html.twig', [
-            'menu' => $menu,
+            'menu' => $menuRepository->findAll(), // ← syntaxe tableau correcte
         ]);
     }
 
@@ -29,19 +28,29 @@ final class MenuController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $isEdit = $menu !== null; // ✅ corrigé
+        $isEdit = $menu !== null;
 
         if (!$menu) {
-            $menu = new Menu(); // ✅ majuscule
+            $menu = new Menu();
         }
 
         $form = $this->createForm(MenuType::class, $menu);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $menu->getPlats()->clear();
-            foreach (['entrees', 'plats', 'desserts'] as $field) {
-                foreach ($form->get($field)->getData() as $plat) {
+            // Supprimer les anciens plats si édition
+            foreach ($menu->getPlats() as $plat) {
+                $menu->removePlat($plat);
+            }
+
+            // Créer et associer les nouveaux plats
+            foreach (['entree', 'plat', 'dessert'] as $type) { // ← noms corrigés (sans 's')
+                $nom = trim($form->get($type)->getData() ?? '');
+                if ($nom !== '') {
+                    $plat = new Plat();
+                    $plat->setNom($nom);
+                    $plat->setType($type);
+                    $em->persist($plat);
                     $menu->addPlat($plat);
                 }
             }
@@ -49,14 +58,13 @@ final class MenuController extends AbstractController
             if (!$isEdit) {
                 $em->persist($menu);
             }
-            $em->flush();
 
-            return $this->redirectToRoute('app_menu');
+            $em->flush();
+            return $this->redirectToRoute('app_menu'); // ← redirige vers la liste
         }
 
         return $this->render('menu/form.html.twig', [
-            'form' => $form,
-            'menu' => $menu,
+            'form' => $form->createView(),
             'isEdit' => $isEdit,
         ]);
     }
