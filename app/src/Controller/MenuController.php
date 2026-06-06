@@ -38,13 +38,13 @@ final class MenuController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Supprimer les anciens plats si édition
+            
             foreach ($menu->getPlats() as $plat) {
                 $menu->removePlat($plat);
             }
 
-            // Créer et associer les nouveaux plats
-            foreach (['entree', 'plat', 'dessert'] as $type) { // ← noms corrigés (sans 's')
+    
+            foreach (['entree', 'plat', 'dessert'] as $type) { 
                 $nom = trim($form->get($type)->getData() ?? '');
                 if ($nom !== '') {
                     $plat = new Plat();
@@ -60,7 +60,7 @@ final class MenuController extends AbstractController
             }
 
             $em->flush();
-            return $this->redirectToRoute('app_menu'); // ← redirige vers la liste
+            return $this->redirectToRoute('app_menu'); 
         }
 
         return $this->render('menu/form.html.twig', [

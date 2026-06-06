@@ -3,5 +3,30 @@
 {% block title %}Hello TempController!{% endblock %}
 
 {% block body %}
-
+<table class="table table-striped">
+<thead>
+    <tr>
+        <th>Plat</th>
+        <th>Températues</th>
+        <th>Heure</th>
+        <th>Date</th>
+        <th>User</th>
+    </tr>
+</thead>
+<tbody>
+    {% for t in temp %}
+    <tr>
+     <td>{{t.id}}</td>
+    <td>{{t.temperature}}</td>
+    <td>{{t.releveAT}}</td>
+    <td>{{t.plat}}</td>
+    <td>{{t.user}}</td>
+    </tr>
+    {% else %}
+    <tr>
+    <td colspan="5"><p>Aucun releves de temperature</p></td>
+    </tr>
+  {% endfor %}
+</tbody>
+</table>
 {% endblock %}
