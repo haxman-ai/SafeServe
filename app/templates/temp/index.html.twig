@@ -8,9 +8,10 @@
         <h4 class="mb-0">Feuille de temperatures</h4>
         <a href="{{ path('app_temp_new') }}" class="btn btn-sm btn-success ms-2">+prise des temperatures</a>
     </div>
-<table class="table table-striped">
+<table class="table table-striped border border-warning">
 <thead>
     <tr>
+        <th>conformites</th>
         <th>Plat</th>
         <th>Températures</th>
         <th>Heure</th>
@@ -21,6 +22,13 @@
 <tbody>
     {% for t in temp %}
     <tr>
+    <td>
+        {% if conformites[t.id] %}
+        <span class="badge bg-success">conforme</span>
+        {% else %}
+        <span class="badge bg-danger">non conforme</span>
+        {% endif %}
+    </td>
     <td>{{t.plat}}</td>
     <td>{{t.temperature}}</td>
     <td>{{ t.releveAT|date('H:i') }}</td>

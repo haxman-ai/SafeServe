@@ -10,15 +10,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
+use App\Service\Haccpservice;
 final class TempController extends AbstractController
 {
     #[Route('/temp', name: 'app_temp')]
-    public function index(TempRepository $temprepository): Response
+    public function index(TempRepository $temprepository, Haccpservice $haccp): Response
        
     {   $this->denyAccessUnlessGranted('ROLE_USER');
+        
+         $temps = $temprepository->findAll();
+         $conformites = [];
+         foreach ($temps as $t) {
+         $conformites[$t->getId()] = $haccp->isconforme($t);
+         }
 
         return $this->render('temp/index.html.twig', [
-            'temp'=>$temprepository->findAll()
+              'temp' => $temps,
+              'conformites' => $conformites,
         ]);
     }
 
