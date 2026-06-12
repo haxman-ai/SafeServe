@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% endblock %}
 
 {% block body %}
 <div class="container mt-4">
@@ -8,7 +7,7 @@
         <h4 class="mb-0">Feuille de temperatures</h4>
         <a href="{{ path('app_temp_new') }}" class="btn btn-sm btn-success ms-2">+prise des temperatures</a>
     </div>
-<table class="table table-striped border border-warning">
+<table class="table table-bordered border border-warning">
 <thead>
     <tr>
         <th>conformites</th>
@@ -20,7 +19,7 @@
     </tr>
 </thead>
 <tbody>
-    {% for t in temp %}
+       {% for t in temp %}
     <tr>
     <td>
         {% if conformites[t.id] %}
@@ -35,11 +34,9 @@
     <td>{{ t.releveAT|date('d/m/Y') }}</td>
     <td>{{t.user.email}}</td>
     </tr>
-    {% else %}
-    <tr>
-    <td colspan="5"><p>Aucun releves de temperature</p></td>
-    </tr>
-  {% endfor %}
+    {% endfor %}
 </tbody>
 </table>
+{{ knp_pagination_render(temp) }}
+
 {% endblock %}

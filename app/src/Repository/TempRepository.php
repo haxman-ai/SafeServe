@@ -19,17 +19,15 @@ class TempRepository extends ServiceEntityRepository
 //    /**
 //     * @return Temp[] Returns an array of Temp objects
 //     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+        public function findTemp(\DateTime $debut, \DateTime $fin): array
+    {
+        return $this->createQueryBuilder('m')
+            ->where('t.revele_at BETWEEN :debut AND :fin')
+            ->setParameter('debut', $debut)
+            ->setParameter('fin', $fin)
+            ->getQuery()
+            ->getResult();
+    }
 
 //    public function findOneBySomeField($value): ?Temp
 //    {

@@ -4,65 +4,86 @@ namespace App\Controller;
 
 use App\Entity\Temp;
 use App\Form\TempType;
+use App\Repository\MenuRepository;
 use App\Repository\TempRepository;
+use App\Service\HaccpService;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\Request;
-use App\Service\Haccpservice;
+
 final class TempController extends AbstractController
 {
     #[Route('/temp', name: 'app_temp')]
-    public function index(TempRepository $temprepository, Haccpservice $haccp): Response
-       
-    {   $this->denyAccessUnlessGranted('ROLE_USER');
-        
-         $temps = $temprepository->findAll();
-         $conformites = [];
-         foreach ($temps as $t) {
-         $conformites[$t->getId()] = $haccp->isconforme($t);
-         }
+    public function index(Request $request, TempRepository $temprepository, HaccpService $haccp, PaginatorInterface $paginator): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        if ($this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $pagination = $paginator->paginate(
+            $temprepository->findBy([], ['releveAT' => 'DESC']),
+            $request->query->getInt('page', 1),
+            8
+        );
+
+        $conformites = [];
+        foreach ($pagination as $t) {
+            $conformites[$t->getId()] = $haccp->isConforme($t);
+        }
 
         return $this->render('temp/index.html.twig', [
-              'temp' => $temps,
-              'conformites' => $conformites,
+            'temp' => $pagination,
+            'conformites' => $conformites,
         ]);
     }
 
-    #[Route('/temp/new',name: 'app_temp_new')]
-    public function form(Request $request,EntityManagerInterface $em,?Temp $temp = null):Response
-
-    {  
+    #[Route('/temp/new', name: 'app_temp_new')]
+    public function form(Request $request, EntityManagerInterface $em): Response
+    {
         $this->denyAccessUnlessGranted('ROLE_USER');
-
-        $isEdit = $temp !== null;
-
-        if(!$temp) {
-            $temp = new Temp();
+        if ($this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
         }
 
-        $form = $this->createForm(TempType::class,$temp);
+        $temp = new Temp();
+        $form = $this->createForm(TempType::class, $temp);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()) {
-
+        if ($form->isSubmitted() && $form->isValid()) {
             $temp->setUser($this->getUser());
-    
-            if (!$isEdit) {
-                $em->persist($temp);
-            }
-
+            $em->persist($temp);
             $em->flush();
-            return $this->redirectToRoute('app_temp'); 
-        
+            return $this->redirectToRoute('app_temp');
         }
+
         return $this->render('temp/form.html.twig', [
             'form' => $form->createView(),
-            'isEdit' => $isEdit,
+            'isEdit' => false,
+        ]);
+    }
+
+
+
+    #[Route('/temp/menu-semaine',name:'app_temp_menu')]
+    public function findPlat(Request $request,EntityManagerInterface $em, MenuRepository $menurepository):Response
+    {
+       $this->denyAccessUnlessGranted('ROLE_USER');
+        
+        $offset = $request->query->getInt('semaine', 0);
+        $lundi = new DateTime('monday this week');
+        $lundi->modify("{$offset} week");
+        $vendredi = clone $lundi;
+        $vendredi->modify('+4 days')->setTime(23, 59, 59);
+        $menusSemaine = $menurepository->findMenusSemaine($lundi, $vendredi);
+
+        return $this->render('temp/menu-semaine.html.twig', [
+            'menu' => $menusSemaine,
         ]);
 
     }
-    
 }
-

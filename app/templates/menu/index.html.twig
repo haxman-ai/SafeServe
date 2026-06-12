@@ -1,10 +1,12 @@
 {% extends 'base.html.twig' %}
 {% block title %}Menu de la semaine{% endblock %}
 {% block body %}
+
 <div class="container mt-4">
     <div class="d-flex justify-content-center align-items-center mb-3">
-        <h4 class="mb-0">Menu de la semaine</h4>
+        <h4 class="mb-0">Menu de la semaine </h4>
         <a href="{{ path('app_menu_new') }}" class="btn btn-sm btn-success ms-2">+ Ajouter un menu</a>
+        
     </div>
 
     <ul class="nav nav-tabs" role="tablist">
@@ -12,24 +14,24 @@
         {% for jour in jours %}
         <li class="nav-item" role="presentation">
             <a class="nav-link {{ loop.first ? 'active' : '' }}" data-bs-toggle="tab" href="#{{ jour }}" role="tab">
-                {{ jour|capitalize }}
+              {{ jour|capitalize }}{{ semaine[loop.index0].format('d/m/Y') }}
             </a>
         </li>
-        {% endfor %}
+        {% endfor %} 
     </ul>
-
-    <div class="tab-content mt-3">
+      <div class="tab-content mt-3">
         {% set jours_num = {'lundi': 1, 'mardi': 2, 'mercredi': 3, 'jeudi': 4, 'vendredi': 5} %}
         {% for jour, num in jours_num %}
         <div class="tab-pane fade {{ loop.first ? 'show active' : '' }}" id="{{ jour }}" role="tabpanel">
-
+        
+    
             {% set menu_du_jour = null %}
             {% for m in menu %}
                 {% if m.servedAt.format('N')|number_format == num %}
                     {% set menu_du_jour = m %}
                 {% endif %}
             {% endfor %}
-
+        
             {% if menu_du_jour %}
             <div class="card border-info" style="max-width: 400px;">
                 <div class="card-body p-3">
@@ -66,8 +68,48 @@
             {% endif %}
         </div>
         {% endfor %}
-    </div>
-</div>
+      </div>
+        <br>
+            <div class="table-responsive-sm">
+            <table class="table table-bordered border border-info table-sm col3">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>entrée</th>
+                <th>plat</th>
+                <th>Dessert</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+               {% for m in menu %}
+            <tr>
+                 <td>{{m.servedAt|date('d/m/Y')}}</td>
+                 <td>{% for p in m.platsByType('entree') %}{{ p.nom }}{% endfor %}🥗</td>
+                 <td>{% for p in m.platsByType('plat') %}{{ p.nom }}{% endfor %}🍽️</td>
+                 <td>{% for p in m.platsByType('dessert') %}{{ p.nom }}{% endfor %}🍰</td>
+                 <td>
+                    <form method="post" action="{{path('app_menu_delete',{id:m.id})}}">
+                        <button type="submit" class ="btn btn-danger btn btn-sm">Supprimer</button>
+                    </form>
+                </td>
+                   <td><a href="{{ path('app_menu_edit', {id: m.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                 </form></td>
+            </tr>
+            {% else %}
+            <tr>
+            <td colspan="5"><p>Aucun menu</p></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+           <div class="d-flex justify-content-between mb-2">
+    <a href="{{ path('app_menu', {semaine: app.request.query.get('semaine', 0) - 1}) }}" class="btn btn-sm btn-outline-primary">← Semaine précédente</a>
+    <a href="{{ path('app_menu', {semaine: app.request.query.get('semaine', 0) + 1}) }}" class="btn btn-sm btn-outline-primary">Semaine suivante →</a>
+     </div>
+        </table>
+     </div>
+ 
 
+  </div>
 {% endblock %}
 
