@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\Menu;
@@ -11,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+
 final class MenuController extends AbstractController
 {
     #[Route('/menu', name: 'app_menu')]
@@ -39,27 +41,20 @@ final class MenuController extends AbstractController
     }
 
     #[Route('/menu/new', name: 'app_menu_new')]
-    public function form(Request $request, EntityManagerInterface $em, ?Menu $menu = null): Response
+    public function form(Request $request, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $isEdit = $menu !== null;
-
-        if (!$menu) {
-            $menu = new Menu();
-        }
-
+        $menu = new Menu();
         $form = $this->createForm(MenuType::class, $menu);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            
             foreach ($menu->getPlats() as $plat) {
                 $menu->removePlat($plat);
             }
 
-    
-            foreach (['entree', 'plat', 'dessert'] as $type) { 
+            foreach (['entree', 'plat', 'dessert'] as $type) {
                 $nom = trim($form->get($type)->getData() ?? '');
                 if ($nom !== '') {
                     $plat = new Plat();
@@ -70,12 +65,9 @@ final class MenuController extends AbstractController
                 }
             }
 
-            if (!$isEdit) {
-                $em->persist($menu);
-            }
-
+            $em->persist($menu);
             $em->flush();
-            return $this->redirectToRoute('app_menu'); 
+            return $this->redirectToRoute('app_menu');
         }
 
         return $this->render('menu/form.html.twig', [
@@ -84,23 +76,20 @@ final class MenuController extends AbstractController
         ]);
     }
 
-    #[Route('/menu/{id}/edit',name:'app_menu_edit')]
-    public function edit(Menu $menu,Request $request, EntityManagerInterface $em,): Response
+    #[Route('/menu/{id}/edit', name: 'app_menu_edit')]
+    public function edit(Menu $menu, Request $request, EntityManagerInterface $em): Response
     {
-       $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-       $form = $this->createForm(MenuType::class,$menu);
-    
+        $form = $this->createForm(MenuType::class, $menu);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-             
             foreach ($menu->getPlats() as $plat) {
                 $menu->removePlat($plat);
             }
 
-    
-            foreach (['entree', 'plat', 'dessert'] as $type) { 
+            foreach (['entree', 'plat', 'dessert'] as $type) {
                 $nom = trim($form->get($type)->getData() ?? '');
                 if ($nom !== '') {
                     $plat = new Plat();
@@ -110,8 +99,9 @@ final class MenuController extends AbstractController
                     $menu->addPlat($plat);
                 }
             }
-                $em->flush();
-            return $this->redirectToRoute('app_menu'); 
+
+            $em->flush();
+            return $this->redirectToRoute('app_menu');
         }
 
         return $this->render('menu/form.html.twig', [
@@ -120,18 +110,12 @@ final class MenuController extends AbstractController
         ]);
     }
 
-
     #[Route('/menu/{id}/delete', name: 'app_menu_delete', methods: ['POST'])]
-    public function delete(Menu $menu,EntityManagerInterface $em): Response
+    public function delete(Menu $menu, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $em->remove($menu);
         $em->flush();
         return $this->redirectToRoute('app_menu');
     }
-
-
-
-
 }
-    

@@ -1,13 +1,12 @@
 {% extends 'base.html.twig' %}
 
-
 {% block body %}
 <div class="container mt-4">
     <div class="d-flex justify-content-center align-items-center mb-3">
-        <h4 class="mb-0">Feuille de temperatures</h4>
-        <a href="{{ path('app_temp_new') }}" class="btn btn-sm btn-success ms-2">+prise des temperatures</a>
+        <a href="{{ path('app_menu') }}"class="btn btn-sm btn-outline-secondary">← Retour aux menus</a>
     </div>
-<table class="table table-bordered border border-warning">
+    
+<table class="table table-bordered border border-info">
 <thead>
     <tr>
         <th>conformites</th>
@@ -37,7 +36,5 @@
     {% endfor %}
 </tbody>
 </table>
-
 {{ knp_pagination_render(temp) }}
-
 {% endblock %}

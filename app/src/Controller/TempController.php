@@ -67,23 +67,49 @@ final class TempController extends AbstractController
         ]);
     }
 
-
-
-    #[Route('/temp/menu-semaine',name:'app_temp_menu')]
-    public function findPlat(Request $request,EntityManagerInterface $em, MenuRepository $menurepository):Response
+    #[Route('/temp/menu-semaine', name: 'app_temp_menu')]
+    public function menuSemaine(Request $request, MenuRepository $menurepository): Response
     {
-       $this->denyAccessUnlessGranted('ROLE_USER');
-        
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        if ($this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
         $offset = $request->query->getInt('semaine', 0);
         $lundi = new DateTime('monday this week');
         $lundi->modify("{$offset} week");
         $vendredi = clone $lundi;
         $vendredi->modify('+4 days')->setTime(23, 59, 59);
+
         $menusSemaine = $menurepository->findMenusSemaine($lundi, $vendredi);
 
         return $this->render('temp/menu-semaine.html.twig', [
             'menu' => $menusSemaine,
         ]);
+    }
+
+    #[Route('/menu/conform', name:'app_conform')]
+    public function conformites(Request $request,TempRepository $temprepository, HaccpService $haccp,PaginatorInterface $paginator): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+    
+          $pagination = $paginator->paginate(
+            $temprepository->findBy([], ['releveAT' => 'DESC']),
+            $request->query->getInt('page', 1),
+            8
+        );
+
+        $conformites = [];
+        foreach ($pagination as $t) {
+            $conformites[$t->getId()] = $haccp->isConforme($t);
+        }
+
+        return $this->render('menu/conform/conform.html.twig', [
+            'temp' => $pagination,
+            'conformites' => $conformites,
+        ]);
+
+
 
     }
 }
