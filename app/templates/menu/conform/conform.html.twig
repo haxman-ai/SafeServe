@@ -33,6 +33,10 @@
     <td>{{ t.releveAT|date('d/m/Y') }}</td>
     <td>{{t.user.email}}</td>
     </tr>
+    {% else %}
+    <tr>
+        <td colspan="6">Aucune température enregistrée.</td>
+    </tr>
     {% endfor %}
 </tbody>
 </table>

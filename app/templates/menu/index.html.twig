@@ -88,11 +88,12 @@
                  <td>{% for p in m.platsByType('entree') %}{{ p.nom }}{% endfor %}🥗</td>
                  <td>{% for p in m.platsByType('plat') %}{{ p.nom }}{% endfor %}🍽️</td>
                  <td>{% for p in m.platsByType('dessert') %}{{ p.nom }}{% endfor %}🍰</td>
-                 <td>
-                    <form method="post" action="{{path('app_menu_delete',{id:m.id})}}">
+                  <td>
+                <form method="post" action="{{path('app_menu_delete',{id:m.id})}}">
                         <button type="submit" class ="btn btn-danger btn btn-sm">Supprimer</button>
-                    </form>
-                </td>
+                </form>
+                   </td>
+                <form>      
                    <td><a href="{{ path('app_menu_edit', {id: m.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
                  </form></td>
             </tr>

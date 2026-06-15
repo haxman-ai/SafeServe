@@ -21,6 +21,7 @@ class TempType extends AbstractType
             ->add('plat', EntityType::class, [
                 'class' => Plat::class,
                 'choice_label' => 'nom',
+                'choices' => $options['plats']
             ])
           
         ;
@@ -30,6 +31,11 @@ class TempType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Temp::class,
+            
         ]);
+
+        $resolver->setRequired('plats');
+    
+
     }
 }

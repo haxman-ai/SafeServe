@@ -50,8 +50,9 @@ final class MenuController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            foreach ($menu->getPlats() as $plat) {
+            foreach ($menu->getPlats()->toArray() as $plat) {
                 $menu->removePlat($plat);
+                $em->remove($plat);
             }
 
             foreach (['entree', 'plat', 'dessert'] as $type) {
@@ -62,6 +63,8 @@ final class MenuController extends AbstractController
                     $plat->setType($type);
                     $em->persist($plat);
                     $menu->addPlat($plat);
+
+                
                 }
             }
 
@@ -82,11 +85,16 @@ final class MenuController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $form = $this->createForm(MenuType::class, $menu);
+        $form->get('entree')->setData($menu->getPlatsByType('entree')->first()?->getNom());
+        $form->get('plat')->setData($menu->getPlatsByType('plat')->first()?->getNom());
+        $form->get('dessert')->setData($menu->getPlatsByType('dessert')->first()?->getNom());
         $form->handleRequest($request);
-
+    
+        
         if ($form->isSubmitted() && $form->isValid()) {
-            foreach ($menu->getPlats() as $plat) {
+            foreach ($menu->getPlats()->toArray() as $plat) {
                 $menu->removePlat($plat);
+            
             }
 
             foreach (['entree', 'plat', 'dessert'] as $type) {
@@ -97,6 +105,7 @@ final class MenuController extends AbstractController
                     $plat->setType($type);
                     $em->persist($plat);
                     $menu->addPlat($plat);
+                    
                 }
             }
 

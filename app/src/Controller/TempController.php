@@ -43,15 +43,23 @@ final class TempController extends AbstractController
     }
 
     #[Route('/temp/new', name: 'app_temp_new')]
-    public function form(Request $request, EntityManagerInterface $em): Response
+    public function form(Request $request, EntityManagerInterface $em ,MenuRepository $menurepository): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
         if ($this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
+        $menuId = $request->query->getInt('menu', 0);
+        $menuday = $menurepository->find($menuId);
+
+        if (!$menuday) {
+         return $this->redirectToRoute('app_temp_menu');
+        }
+
         $temp = new Temp();
-        $form = $this->createForm(TempType::class, $temp);
+        $temp->setReleveAT($menuday->getServedAt());
+        $form = $this->createForm(TempType::class, $temp, ['plats' => $menuday->getPlats()]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -74,7 +82,7 @@ final class TempController extends AbstractController
         if ($this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
-
+    
         $offset = $request->query->getInt('semaine', 0);
         $lundi = new DateTime('monday this week');
         $lundi->modify("{$offset} week");

@@ -5,7 +5,6 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-center align-items-center mb-3">
         <h4 class="mb-0">Feuille de temperatures</h4>
-        <a href="{{ path('app_temp_new') }}" class="btn btn-sm btn-success ms-2">+prise des temperatures</a>
     </div>
 <table class="table table-bordered border border-warning">
 <thead>
@@ -19,20 +18,24 @@
     </tr>
 </thead>
 <tbody>
-       {% for t in temp %}
+    {% for t in temp %}
     <tr>
-    <td>
-        {% if conformites[t.id] %}
-        <span class="badge bg-success">conforme</span>
-        {% else %}
-        <span class="badge bg-danger">non conforme</span>
-        {% endif %}
-    </td>
-    <td>{{t.plat}}</td>
-    <td>{{t.temperature}}</td>
-    <td>{{ t.releveAT|date('H:i') }}</td>
-    <td>{{ t.releveAT|date('d/m/Y') }}</td>
-    <td>{{t.user.email}}</td>
+        <td>
+            {% if conformites[t.id] %}
+            <span class="badge bg-success">conforme</span>
+            {% else %}
+            <span class="badge bg-danger">non conforme</span>
+            {% endif %}
+        </td>
+        <td>{{ t.plat }}</td>
+        <td>{{ t.temperature }}</td>
+        <td>{{ t.releveAT|date('H:i') }}</td>
+        <td>{{ t.releveAT|date('d/m/Y') }}</td>
+        <td>{{ t.user.email }}</td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="6">Aucune température enregistrée.</td>
     </tr>
     {% endfor %}
 </tbody>
