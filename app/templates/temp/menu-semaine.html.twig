@@ -22,7 +22,7 @@
                 <div class="card border-warning">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         {% if m.servedAt|date('Y/m/d') == "now"|date('Y/m/d') %}
-                        <a href="{{path('app_temp_new',{'menu':m.id})}}" class="btn btn-sm btn-outline-success">🌡️</a>
+                        <a href="{{path('app_temp_new',{'menu':m.id})}}" class="btn btn-sm btn-outline-primary">🌡️</a>
                          {% endif %}
                         📅 {% set jours_fr = {'1': 'Lundi', '2': 'Mardi', '3': 'Mercredi', '4': 'Jeudi', '5': 'Vendredi'} %}
                       {{ jours_fr[m.servedAt.format('N')] }} {{ m.servedAt|date('d/m/Y') }}
@@ -32,7 +32,7 @@
                         <p class="mb-2">
                             <strong>🥗 Entrée :</strong>
                             {% for p in m.platsByType('entree') %}
-                                {{ p.nom }}{% if not loop.last %}, {% endif %}
+                                {{ p.name }}{% if not loop.last %}, {% endif %}
                             {% endfor %}
                         </p>
                         {% endif %}
@@ -41,7 +41,7 @@
                         <p class="mb-2">
                             <strong>🍽️ Plat :</strong>
                             {% for p in m.platsByType('plat') %}
-                                {{ p.nom }}{% if not loop.last %}, {% endif %}
+                                {{ p.name }}{% if not loop.last %}, {% endif %}
                             {% endfor %}
                         </p>
                         {% endif %}
@@ -50,7 +50,7 @@
                         <p class="mb-0">
                             <strong>🍰 Dessert :</strong>
                             {% for p in m.platsByType('dessert') %}
-                                {{ p.nom }}{% if not loop.last %}, {% endif %}
+                                {{ p.name }}{% if not loop.last %}, {% endif %}
                             {% endfor %}
                         </p>
                         {% endif %}

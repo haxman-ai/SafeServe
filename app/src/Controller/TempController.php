@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class TempController extends AbstractController
 {
     #[Route('/temp', name: 'app_temp')]
-    public function index(Request $request, TempRepository $temprepository, HaccpService $haccp, PaginatorInterface $paginator): Response
+    public function index(Request $request, TempRepository $tempRepository, HaccpService $haccp, PaginatorInterface $paginator): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
         if ($this->isGranted('ROLE_ADMIN')) {
@@ -26,7 +26,7 @@ final class TempController extends AbstractController
         }
 
         $pagination = $paginator->paginate(
-            $temprepository->findBy([], ['releveAT' => 'DESC']),
+            $tempRepository->findBy([], ['releveAT' => 'DESC']),
             $request->query->getInt('page', 1),
             8
         );
@@ -43,7 +43,7 @@ final class TempController extends AbstractController
     }
 
     #[Route('/temp/new', name: 'app_temp_new')]
-    public function form(Request $request, EntityManagerInterface $em ,MenuRepository $menurepository): Response
+    public function form(Request $request, EntityManagerInterface $em, MenuRepository $menuRepository): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
         if ($this->isGranted('ROLE_ADMIN')) {
@@ -51,15 +51,15 @@ final class TempController extends AbstractController
         }
 
         $menuId = $request->query->getInt('menu', 0);
-        $menuday = $menurepository->find($menuId);
+        $dailyMenu = $menuRepository->find($menuId);
 
-        if (!$menuday) {
-         return $this->redirectToRoute('app_temp_menu');
+        if (!$dailyMenu) {
+            return $this->redirectToRoute('app_temp_menu');
         }
 
         $temp = new Temp();
-        $temp->setReleveAT($menuday->getServedAt());
-        $form = $this->createForm(TempType::class, $temp, ['plats' => $menuday->getPlats()]);
+        $temp->setReleveAT($dailyMenu->getServedAt());
+        $form = $this->createForm(TempType::class, $temp, ['plats' => $dailyMenu->getPlats()]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -76,33 +76,33 @@ final class TempController extends AbstractController
     }
 
     #[Route('/temp/menu-semaine', name: 'app_temp_menu')]
-    public function menuSemaine(Request $request, MenuRepository $menurepository): Response
+    public function menuSemaine(Request $request, MenuRepository $menuRepository): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
         if ($this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
-    
-        $offset = $request->query->getInt('semaine', 0);
-        $lundi = new DateTime('monday this week');
-        $lundi->modify("{$offset} week");
-        $vendredi = clone $lundi;
-        $vendredi->modify('+4 days')->setTime(23, 59, 59);
 
-        $menusSemaine = $menurepository->findMenusSemaine($lundi, $vendredi);
+        $offset = $request->query->getInt('semaine', 0);
+        $monday = new DateTime('monday this week');
+        $monday->modify("{$offset} week");
+        $friday = clone $monday;
+        $friday->modify('+4 days')->setTime(23, 59, 59);
+
+        $weekMenus = $menuRepository->findWeekMenus($monday, $friday);
 
         return $this->render('temp/menu-semaine.html.twig', [
-            'menu' => $menusSemaine,
+            'menu' => $weekMenus,
         ]);
     }
 
-    #[Route('/menu/conform', name:'app_conform')]
-    public function conformites(Request $request,TempRepository $temprepository, HaccpService $haccp,PaginatorInterface $paginator): Response
+    #[Route('/menu/conform', name: 'app_conform')]
+    public function conformites(Request $request, TempRepository $tempRepository, HaccpService $haccp, PaginatorInterface $paginator): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-    
-          $pagination = $paginator->paginate(
-            $temprepository->findBy([], ['releveAT' => 'DESC']),
+
+        $pagination = $paginator->paginate(
+            $tempRepository->findBy([], ['releveAT' => 'DESC']),
             $request->query->getInt('page', 1),
             8
         );
@@ -116,8 +116,5 @@ final class TempController extends AbstractController
             'temp' => $pagination,
             'conformites' => $conformites,
         ]);
-
-
-
     }
 }

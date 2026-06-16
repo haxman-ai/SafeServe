@@ -16,12 +16,12 @@ class MenuRepository extends ServiceEntityRepository
         parent::__construct($registry, Menu::class);
     }
 
-    public function findMenusSemaine(\DateTime $debut, \DateTime $fin): array
+    public function findWeekMenus(\DateTime $start, \DateTime $end): array
     {
         return $this->createQueryBuilder('m')
-            ->where('m.served_at BETWEEN :debut AND :fin')
-            ->setParameter('debut', $debut)
-            ->setParameter('fin', $fin)
+            ->where('m.served_at BETWEEN :start AND :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
             ->getQuery()
             ->getResult();
     }

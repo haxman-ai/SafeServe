@@ -13,14 +13,14 @@ class Plat
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $nom = null;
+    private ?string $name = null;
 
     #[ORM\Column(length: 50)]
     private ?string $type = null;
 
     public function __toString(): string
     {
-        return $this->nom ?? '';
+        return $this->name ?? '';
     }
 
     public function getId(): ?int
@@ -28,20 +28,14 @@ class Plat
         return $this->id;
     }
 
-    public function setId(string $id): static
+    public function getName(): ?string
     {
-        $this->id = $id;
-        return $this;
+        return $this->name;
     }
 
-    public function getNom(): ?string
+    public function setName(string $name): static
     {
-        return $this->nom;
-    }
-
-    public function setNom(string $nom): static
-    {
-        $this->nom = $nom;
+        $this->name = $name;
         return $this;
     }
 

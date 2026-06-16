@@ -34,7 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $nom = null;
+    private ?string $name = null;
 
     public function getId(): ?int
     {
@@ -117,14 +117,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // @deprecated, to be removed when upgrading to Symfony 8
     }
 
-    public function getNom(): ?string
+    public function getName(): ?string
     {
-        return $this->nom;
+        return $this->name;
     }
 
-    public function setNom(string $nom): static
+    public function setName(string $name): static
     {
-        $this->nom = $nom;
+        $this->name = $name;
 
         return $this;
     }

@@ -39,7 +39,7 @@
                     <p class="mb-2">
                         <strong>🥗 Entrée :</strong>
                         {% for p in menu_du_jour.platsByType('entree') %}
-                            {{ p.nom }}{% if not loop.last %}, {% endif %}
+                            {{ p.name }}{% if not loop.last %}, {% endif %}
                         {% endfor %}
                     </p>
                     {% endif %}
@@ -48,7 +48,7 @@
                     <p class="mb-2">
                         <strong>🍽️ Plat :</strong>
                         {% for p in menu_du_jour.platsByType('plat') %}
-                            {{ p.nom }}{% if not loop.last %}, {% endif %}
+                            {{ p.name }}{% if not loop.last %}, {% endif %}
                         {% endfor %}
                     </p>
                     {% endif %}
@@ -57,7 +57,7 @@
                     <p class="mb-0">
                         <strong>🍰 Dessert :</strong>
                         {% for p in menu_du_jour.platsByType('dessert') %}
-                            {{ p.nom }}{% if not loop.last %}, {% endif %}
+                            {{ p.name }}{% if not loop.last %}, {% endif %}
                         {% endfor %}
                     </p>
                     {% endif %}
@@ -85,17 +85,16 @@
                {% for m in menu %}
             <tr>
                  <td>{{m.servedAt|date('d/m/Y')}}</td>
-                 <td>{% for p in m.platsByType('entree') %}{{ p.nom }}{% endfor %}🥗</td>
-                 <td>{% for p in m.platsByType('plat') %}{{ p.nom }}{% endfor %}🍽️</td>
-                 <td>{% for p in m.platsByType('dessert') %}{{ p.nom }}{% endfor %}🍰</td>
-                  <td>
+                 <td>{% for p in m.platsByType('entree') %}{{ p.name }}{% endfor %}🥗</td>
+                 <td>{% for p in m.platsByType('plat') %}{{ p.name }}{% endfor %}🍽️</td>
+                 <td>{% for p in m.platsByType('dessert') %}{{ p.name }}{% endfor %}🍰</td>
+                 <td>
                 <form method="post" action="{{path('app_menu_delete',{id:m.id})}}">
-                        <button type="submit" class ="btn btn-danger btn btn-sm">Supprimer</button>
+                <button type="submit" class ="btn btn-danger btn btn-sm">Supprimer</button>
                 </form>
-                   </td>
-                <form>      
-                   <td><a href="{{ path('app_menu_edit', {id: m.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
-                 </form></td>
+                </td>     
+                <td><a href="{{ path('app_menu_edit', {id: m.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                </td>
             </tr>
             {% else %}
             <tr>

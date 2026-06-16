@@ -17,10 +17,11 @@ class TempType extends AbstractType
             ->add('temperature')
             ->add('releveAT', null, [
                 'widget' => 'single_text',
+                'label' => 'Date et Heure',
             ])
             ->add('plat', EntityType::class, [
                 'class' => Plat::class,
-                'choice_label' => 'nom',
+                'choice_label' => 'name',
                 'choices' => $options['plats']
             ])
           
@@ -31,6 +32,7 @@ class TempType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Temp::class,
+            'plats'=>[]
             
         ]);
 

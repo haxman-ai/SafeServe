@@ -21,22 +21,22 @@ final class MenuController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $offset = $request->query->getInt('semaine', 0);
-        $lundi = new DateTime('monday this week');
-        $lundi->modify("{$offset} week");
-        $vendredi = clone $lundi;
-        $vendredi->modify('+4 days')->setTime(23, 59, 59);
-        $menusSemaine = $menuRepository->findMenusSemaine($lundi, $vendredi);
+        $monday = new DateTime('monday this week');
+        $monday->modify("{$offset} week");
+        $friday = clone $monday;
+        $friday->modify('+4 days')->setTime(23, 59, 59);
+        $weekMenus = $menuRepository->findWeekMenus($monday, $friday);
 
-        $semaine = [];
-        $jour = clone $lundi;
+        $week = [];
+        $day = clone $monday;
         for ($i = 0; $i < 5; $i++) {
-            $semaine[] = clone $jour;
-            $jour->modify('+1 day');
+            $week[] = clone $day;
+            $day->modify('+1 day');
         }
 
         return $this->render('menu/index.html.twig', [
-            'menu' => $menusSemaine,
-            'semaine' => $semaine,
+            'menu' => $weekMenus,
+            'semaine' => $week,
         ]);
     }
 
@@ -56,15 +56,13 @@ final class MenuController extends AbstractController
             }
 
             foreach (['entree', 'plat', 'dessert'] as $type) {
-                $nom = trim($form->get($type)->getData() ?? '');
-                if ($nom !== '') {
+                $name = trim($form->get($type)->getData() ?? '');
+                if ($name !== '') {
                     $plat = new Plat();
-                    $plat->setNom($nom);
+                    $plat->setName($name);
                     $plat->setType($type);
                     $em->persist($plat);
                     $menu->addPlat($plat);
-
-                
                 }
             }
 
@@ -85,27 +83,24 @@ final class MenuController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $form = $this->createForm(MenuType::class, $menu);
-        $form->get('entree')->setData($menu->getPlatsByType('entree')->first()?->getNom());
-        $form->get('plat')->setData($menu->getPlatsByType('plat')->first()?->getNom());
-        $form->get('dessert')->setData($menu->getPlatsByType('dessert')->first()?->getNom());
+        $form->get('entree')->setData($menu->getPlatsByType('entree')->first()?->getName());
+        $form->get('plat')->setData($menu->getPlatsByType('plat')->first()?->getName());
+        $form->get('dessert')->setData($menu->getPlatsByType('dessert')->first()?->getName());
         $form->handleRequest($request);
-    
-        
+
         if ($form->isSubmitted() && $form->isValid()) {
             foreach ($menu->getPlats()->toArray() as $plat) {
                 $menu->removePlat($plat);
-            
             }
 
             foreach (['entree', 'plat', 'dessert'] as $type) {
-                $nom = trim($form->get($type)->getData() ?? '');
-                if ($nom !== '') {
+                $name = trim($form->get($type)->getData() ?? '');
+                if ($name !== '') {
                     $plat = new Plat();
-                    $plat->setNom($nom);
+                    $plat->setName($name);
                     $plat->setType($type);
                     $em->persist($plat);
                     $menu->addPlat($plat);
-                    
                 }
             }
 
