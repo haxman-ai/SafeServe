@@ -122,4 +122,6 @@ final class MenuController extends AbstractController
         $em->flush();
         return $this->redirectToRoute('app_menu');
     }
+
+    
 }

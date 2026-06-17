@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-center align-items-center mb-3">
         <a href="{{ path('app_menu') }}"class="btn btn-sm btn-outline-secondary">← Retour aux menus</a>
     </div>
-    
+<div class="table-responsive-sm">
 <table class="table table-bordered border border-info">
 <thead>
     <tr>
@@ -40,5 +40,7 @@
     {% endfor %}
 </tbody>
 </table>
+</div>
+
 {{ knp_pagination_render(temp) }}
 {% endblock %}
