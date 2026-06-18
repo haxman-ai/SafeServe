@@ -7,9 +7,9 @@
         <h4 class="mb-0">Feuille de temperatures</h4>
     </div>
 <div class="table-responsive-sm">
-<table class="table table-bordered border border-warning">
+<table class="table table-bordered border border-warning table table-hover">
 <thead>
-    <tr>
+    <tr class="table-active">
         <th>conformites</th>
         <th>Plat</th>
         <th>Températures</th>
@@ -20,7 +20,7 @@
 </thead>
 <tbody>
     {% for t in temp %}
-    <tr>
+    <tr class="table-active">
         <td>
             {% if conformites[t.id] %}
             <span class="badge bg-success">conforme</span>

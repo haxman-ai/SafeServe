@@ -6,9 +6,9 @@
         <a href="{{ path('app_menu') }}"class="btn btn-sm btn-outline-secondary">← Retour aux menus</a>
     </div>
 <div class="table-responsive-sm">
-<table class="table table-bordered border border-info">
+<table class="table table-bordered border border-info table table-hover">
 <thead>
-    <tr>
+    <tr class="table-active">
         <th>conformites</th>
         <th>Plat</th>
         <th>Températures</th>
@@ -19,7 +19,7 @@
 </thead>
 <tbody>
        {% for t in temp %}
-    <tr>
+    <tr class="table-active">
     <td>
         {% if conformites[t.id] %}
         <span class="badge bg-success">conforme</span>
@@ -41,6 +41,19 @@
 </tbody>
 </table>
 </div>
-
+<div class="alert alert-dismissible alert-danger" id="alert-non-conforme" style="max-width:300px">
+  <strong>Non conformités : <span id="count-non-conforme"></span></strong>
+</div>
+<div class="alert alert-dismissible alert-success" id="alert-conforme" style="max-width:300px">
+  <strong>Conformités : <span id="count-conforme"></span></strong>
+</div>
+<script>
+document.addEventListener('turbo:load', function() {
+const nonConformeCount = document.querySelectorAll('.bg-danger').length;
+const conformeCount = document.querySelectorAll('.bg-success').length;
+document.getElementById('count-non-conforme').textContent = nonConformeCount;
+document.getElementById('count-conforme').textContent = conformeCount;
+});
+</script>
 {{ knp_pagination_render(temp) }}
 {% endblock %}

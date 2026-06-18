@@ -18,7 +18,7 @@
         <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link text-success" 
+                    <a class="nav-link text-secondary-emphasis" 
                        href="/guide-hygiene-haccp-2021.pdf" 
                        target="_blank">
                         Documentation
@@ -27,7 +27,7 @@
             </ul>
 
             {% if app.user %}
-                <a href="{{ logout_path() }}">
+                <a href="{{ logout_path() }}"class="btn btn-outline-secondary btn-sm">
                     Déconnexion
                 </a>
             {% else %}
@@ -42,12 +42,12 @@
             {% endif %}
                {% if is_granted('ROLE_USER') and not  is_granted ('ROLE_ADMIN') %}
                 <div class="d-flex">
-                    <a href="{{ path('app_temp') }}" class="btn btn-outline-success btn-sm ms-2">
+                    <a href="{{ path('app_temp') }}" class="btn btn-outline-warning btn-sm ms-2">
                         Temperatures
                     </a>
                 </div>
                 <div class="d-flex">
-                    <a href="{{path('app_temp_menu')}}"class="btn btn-outline-success btn-sm ms-2">
+                    <a href="{{path('app_temp_menu')}}"class="btn btn-outline-warning btn-sm ms-2">
                         Menu-semaines
                     </a>
                 </div>
@@ -55,12 +55,12 @@
 
             {% if is_granted('ROLE_ADMIN') %}
                 <div class="d-flex">
-                    <a href="{{ path('app_menu') }}" class="btn btn-outline-success btn-sm ms-2">
+                    <a href="{{ path('app_menu') }}" class="btn btn-outline-info btn-sm ms-2">
                         Menu
                     </a>
                 </div>
                 <div class="d-flex">
-                    <a href="{{path('app_conform')}}" class="btn btn-outline-success btn-sm ms-2">
+                    <a href="{{path('app_conform')}}" class="btn btn-outline-info btn-sm ms-2">
                     conformites
                     </a>
                 </div>

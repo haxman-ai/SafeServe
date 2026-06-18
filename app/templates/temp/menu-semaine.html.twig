@@ -19,7 +19,7 @@
         <div class="row">
             {% for m in menu %}
             <div class="col-md-4 mb-3">
-                <div class="card border-warning">
+                <div class="card border-warning" style="max-width: 350px;">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         {% if m.servedAt|date('Y/m/d') == "now"|date('Y/m/d') %}
                         <a href="{{path('app_temp_new',{'menu':m.id})}}" class="btn btn-sm btn-outline-danger">🌡️<strong>Enregistrement</strong></a>
