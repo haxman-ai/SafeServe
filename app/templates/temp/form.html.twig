@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+   {{ isEdit ? 'Modifier' : 'Créer' }} temperature
+ 
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4" style="max-width: 300px;">
+        <h4>{{ isEdit ? 'Modifier' : 'Créer' }} temperature</h4>
+{{ form_start(form) }}
+{{ form_widget(form) }}
+<button type="submit"class="btn btn-outline-success mt-2">Enregistrer</button>
+{{ form_end(form) }}
+{% endblock %}

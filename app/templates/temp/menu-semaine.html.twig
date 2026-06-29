@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+{% import '_shared/_macros.html.twig' as platMacros %}
+{% block title %}Menu de la semaine{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Menu de la semaine</h4>
+        <a href="{{ path('app_temp') }}" class="btn btn-sm btn-outline-secondary">← Retour aux températures</a>
+    </div>
+
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{{ path('app_temp_menu', {semaine: app.request.query.get('semaine', 0) - 1}) }}" class="btn btn-sm btn-outline-secondary">← Semaine précédente</a>
+        <a href="{{ path('app_temp_menu', {semaine: app.request.query.get('semaine', 0) + 1}) }}" class="btn btn-sm btn-outline-secondary">Semaine suivante →</a>
+    </div>
+
+    {% if menu is empty %}
+        <p class="text-muted fst-italic">Aucun menu enregistré pour cette semaine.</p>
+    {% else %}
+        <div class="row">
+            {% for m in menu %}
+            <div class="col-md-4 mb-3">
+                <div class="card border-warning" style="max-width: 350px;">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        {% if m.servedAt|date('Y/m/d') == "now"|date('Y/m/d') %}
+                        <a href="{{path('app_temp_new',{'menu':m.id})}}" class="btn btn-sm btn-outline-danger">🌡️<strong>Enregistrement</strong></a>
+                         {% endif %}
+                        📅 {% set jours_fr = {'1': 'Lundi', '2': 'Mardi', '3': 'Mercredi', '4': 'Jeudi', '5': 'Vendredi'} %}
+                      {{ jours_fr[m.servedAt.format('N')] }} {{ m.servedAt|date('d/m/Y') }}
+                    </div>
+                    <div class="card-body p-3">
+                        {% if m.platsByType('entree') is not empty %}
+                        <p class="mb-2">
+                            <strong>🥗 Entrée :</strong>
+                            {% for p in m.platsByType('entree') %}
+                                {{ p.name }}{{ platMacros.emoji('entree') }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        {% endif %}
+
+                        {% if m.platsByType('plat') is not empty %}
+                        <p class="mb-2">
+                            <strong>🍽️ Plat :</strong>
+                            {% for p in m.platsByType('plat') %}
+                                {{ p.name }}{{ platMacros.emoji('plat') }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        {% endif %}
+
+                        {% if m.platsByType('dessert') is not empty %}
+                        <p class="mb-0">
+                            <strong>🍰 Dessert :</strong>
+                            {% for p in m.platsByType('dessert') %}
+                                {{ p.name }}{{ platMacros.emoji('dessert') }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

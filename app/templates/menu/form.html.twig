@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ isEdit ? 'Modifier' : 'Créer' }} un menu
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4" style="max-width: 500px;">
+        <h4>{{ isEdit ? 'Modifier' : 'Créer' }} un menu</h4>
+
+        {{ form_start(form) }}
+            {{ form_row(form.servedAt) }}
+            {{ form_row(form.entree) }}
+            {{ form_row(form.plat) }}
+            {{ form_row(form.dessert) }}
+            <button type="submit" class="btn btn-outline-success mt-2  ">
+                {{ isEdit ? 'Modifier' : 'Créer' }}
+            </button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

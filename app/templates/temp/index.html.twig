@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+{% import '_shared/_macros.html.twig' as platMacros %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-center align-items-center mb-3">
+        <h4 class="mb-0">Feuille de temperatures</h4>
+    </div>
+
+    <div class="table-responsive-sm">
+        <table class="table table-bordered border border-warning table table-hover">
+            <thead>
+                <tr class="table-active">
+                    <th>conformites</th>
+                    <th>Plat</th>
+                    <th>Températures</th>
+                    <th>Heure</th>
+                    <th>Date</th>
+                    <th>User</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in temp %}
+                    <tr class="table-active">
+                        <td>
+                            {% if conformites[t.id] %}
+                                <span class="badge bg-success">conforme</span>
+                            {% else %}
+                                <span class="badge bg-danger">non conforme</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ t.plat }}{{ platMacros.emoji(t.plat.type) }}</td>
+                        <td>{{ t.temperature }}</td>
+                        <td>{{ t.releveAT|date('H:i') }}</td>
+                        <td>{{ t.releveAT|date('d/m/Y') }}</td>
+                        <td>{{ t.user.email }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6">Aucune température enregistrée.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {{ knp_pagination_render(temp) }}
+{% endblock %}
