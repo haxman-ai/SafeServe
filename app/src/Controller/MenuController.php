@@ -6,9 +6,10 @@ use App\Entity\Menu;
 use App\Entity\Plat;
 use App\Form\MenuType;
 use App\Repository\MenuRepository;
-use DateTime;
+use App\Repository\TempRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,10 +22,7 @@ final class MenuController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $offset = $request->query->getInt('semaine', 0);
-        $monday = new DateTime('monday this week');
-        $monday->modify("{$offset} week");
-        $friday = clone $monday;
-        $friday->modify('+4 days')->setTime(23, 59, 59);
+        [$monday, $friday] = $menuRepository->getWeekBounds($offset);
         $weekMenus = $menuRepository->findWeekMenus($monday, $friday);
 
         $week = [];
@@ -41,7 +39,7 @@ final class MenuController extends AbstractController
     }
 
     #[Route('/menu/new', name: 'app_menu_new')]
-    public function form(Request $request, EntityManagerInterface $em): Response
+    public function form(Request $request, TempRepository $tempRepository, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -50,21 +48,7 @@ final class MenuController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            foreach ($menu->getPlats()->toArray() as $plat) {
-                $menu->removePlat($plat);
-                $em->remove($plat);
-            }
-
-            foreach (['entree', 'plat', 'dessert'] as $type) {
-                $name = trim($form->get($type)->getData() ?? '');
-                if ($name !== '') {
-                    $plat = new Plat();
-                    $plat->setName($name);
-                    $plat->setType($type);
-                    $em->persist($plat);
-                    $menu->addPlat($plat);
-                }
-            }
+            $this->syncPlats($menu, $form, $tempRepository, $em);
 
             $em->persist($menu);
             $em->flush();
@@ -78,7 +62,7 @@ final class MenuController extends AbstractController
     }
 
     #[Route('/menu/{id}/edit', name: 'app_menu_edit')]
-    public function edit(Menu $menu, Request $request, EntityManagerInterface $em): Response
+    public function edit(Menu $menu, Request $request, TempRepository $tempRepository, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -89,20 +73,7 @@ final class MenuController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            foreach ($menu->getPlats()->toArray() as $plat) {
-                $menu->removePlat($plat);
-            }
-
-            foreach (['entree', 'plat', 'dessert'] as $type) {
-                $name = trim($form->get($type)->getData() ?? '');
-                if ($name !== '') {
-                    $plat = new Plat();
-                    $plat->setName($name);
-                    $plat->setType($type);
-                    $em->persist($plat);
-                    $menu->addPlat($plat);
-                }
-            }
+            $this->syncPlats($menu, $form, $tempRepository, $em);
 
             $em->flush();
             return $this->redirectToRoute('app_menu');
@@ -112,6 +83,31 @@ final class MenuController extends AbstractController
             'form' => $form->createView(),
             'isEdit' => true,
         ]);
+    }
+
+    /**
+     * Retire les anciens plats du menu (en supprimant ceux sans relevé de température)
+     * et recrée les plats entrée/plat/dessert à partir des champs du formulaire.
+     */
+    private function syncPlats(Menu $menu, FormInterface $form, TempRepository $tempRepository, EntityManagerInterface $em): void
+    {
+        foreach ($menu->getPlats()->toArray() as $plat) {
+            $menu->removePlat($plat);
+            if ($tempRepository->count(['plat' => $plat]) === 0) {
+                $em->remove($plat);
+            }
+        }
+
+        foreach (['entree', 'plat', 'dessert'] as $type) {
+            $name = trim($form->get($type)->getData() ?? '');
+            if ($name !== '') {
+                $plat = new Plat();
+                $plat->setName($name);
+                $plat->setType($type);
+                $em->persist($plat);
+                $menu->addPlat($plat);
+            }
+        }
     }
 
     #[Route('/menu/{id}/delete', name: 'app_menu_delete', methods: ['POST'])]

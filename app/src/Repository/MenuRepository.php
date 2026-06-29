@@ -25,4 +25,19 @@ class MenuRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Bornes lundi-vendredi de la semaine décalée de $offset semaines par rapport à la semaine courante.
+     *
+     * @return array{0: \DateTime, 1: \DateTime}
+     */
+    public function getWeekBounds(int $offset): array
+    {
+        $monday = new \DateTime('monday this week');
+        $monday->modify("{$offset} week");
+        $friday = clone $monday;
+        $friday->modify('+4 days')->setTime(23, 59, 59);
+
+        return [$monday, $friday];
+    }
 }

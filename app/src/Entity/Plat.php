@@ -7,6 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: PlatRepository::class)]
 class Plat
 {
+    public const TYPE_ENTREE = 'entree';
+    public const TYPE_PLAT = 'plat';
+    public const TYPE_DESSERT = 'dessert';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

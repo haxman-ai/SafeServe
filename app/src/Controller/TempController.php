@@ -7,7 +7,6 @@ use App\Form\TempType;
 use App\Repository\MenuRepository;
 use App\Repository\TempRepository;
 use App\Service\HaccpService;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,10 +19,7 @@ final class TempController extends AbstractController
     #[Route('/temp', name: 'app_temp')]
     public function index(Request $request, TempRepository $tempRepository, HaccpService $haccp, PaginatorInterface $paginator): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-        if ($this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException();
-        }
+        $this->denyAdminAccess();
 
         $pagination = $paginator->paginate(
             $tempRepository->findBy([], ['releveAT' => 'DESC']),
@@ -31,10 +27,7 @@ final class TempController extends AbstractController
             8
         );
 
-        $conformites = [];
-        foreach ($pagination as $t) {
-            $conformites[$t->getId()] = $haccp->isConforme($t);
-        }
+        $conformites = $haccp->mapConformites($pagination);
 
         return $this->render('temp/index.html.twig', [
             'temp' => $pagination,
@@ -45,10 +38,7 @@ final class TempController extends AbstractController
     #[Route('/temp/new', name: 'app_temp_new')]
     public function form(Request $request, EntityManagerInterface $em, MenuRepository $menuRepository): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-        if ($this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException();
-        }
+        $this->denyAdminAccess();
 
         $menuId = $request->query->getInt('menu', 0);
         $dailyMenu = $menuRepository->find($menuId);
@@ -78,17 +68,10 @@ final class TempController extends AbstractController
     #[Route('/temp/menu-semaine', name: 'app_temp_menu')]
     public function menuSemaine(Request $request, MenuRepository $menuRepository): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-        if ($this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException();
-        }
+        $this->denyAdminAccess();
 
         $offset = $request->query->getInt('semaine', 0);
-        $monday = new DateTime('monday this week');
-        $monday->modify("{$offset} week");
-        $friday = clone $monday;
-        $friday->modify('+4 days')->setTime(23, 59, 59);
-
+        [$monday, $friday] = $menuRepository->getWeekBounds($offset);
         $weekMenus = $menuRepository->findWeekMenus($monday, $friday);
 
         return $this->render('temp/menu-semaine.html.twig', [
@@ -107,14 +90,23 @@ final class TempController extends AbstractController
             8
         );
 
-        $conformites = [];
-        foreach ($pagination as $t) {
-            $conformites[$t->getId()] = $haccp->isConforme($t);
-        }
+        $conformites = $haccp->mapConformites($pagination);
 
         return $this->render('menu/conform/conform.html.twig', [
             'temp' => $pagination,
             'conformites' => $conformites,
         ]);
+    }
+
+    /**
+     * Réserve les routes /temp aux cuisiniers : User::getRoles() ajoute toujours
+     * ROLE_USER, donc les admins le possèdent aussi et doivent être exclus explicitement.
+     */
+    private function denyAdminAccess(): void
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        if ($this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
     }
 }

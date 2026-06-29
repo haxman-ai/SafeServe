@@ -18,17 +18,17 @@ class MenuType extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('entree', TextType::class, [
-                'label' => '🥗 Entrée',
+                'label' => '🥗 Entrée❄️',
                 'mapped' => false,
                 'required' => false,
             ])
             ->add('plat', TextType::class, [
-                'label' => '🍽️ Plat principal',
+                'label' => '🍽️ Plat principal♨️',
                 'mapped' => false,
                 'required' => false,
             ])
             ->add('dessert', TextType::class, [
-                'label' => '🍰 Dessert',
+                'label' => '🍰 Dessert❄️',
                 'mapped' => false,
                 'required' => false,
             ])
