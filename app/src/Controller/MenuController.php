@@ -111,11 +111,15 @@ final class MenuController extends AbstractController
     }
 
     #[Route('/menu/{id}/delete', name: 'app_menu_delete', methods: ['POST'])]
-    public function delete(Menu $menu, EntityManagerInterface $em): Response
+    public function delete(Menu $menu, Request $request, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $em->remove($menu);
-        $em->flush();
+
+        if ($this->isCsrfTokenValid('delete-menu-' . $menu->getId(), $request->request->get('_token'))) {
+            $em->remove($menu);
+            $em->flush();
+        }
+
         return $this->redirectToRoute('app_menu');
     }
 
