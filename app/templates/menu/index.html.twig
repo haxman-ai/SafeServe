@@ -91,7 +91,7 @@
                         <td>{% for p in m.platsByType('plat') %}{{ p.name }}{{ platMacros.emoji('plat') }}{% endfor %} 🍽️</td>
                         <td>{% for p in m.platsByType('dessert') %}{{ p.name }}{{ platMacros.emoji('dessert') }}{% endfor %} 🍰</td>
                         <td>
-                            <form method="post" action="{{ path('app_menu_delete', {id: m.id}) }}">
+                            <form method="post" action="{{ path('app_menu_delete', {id: m.id, semaine: app.request.query.get('semaine', 0)}) }}">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete-menu-' ~ m.id) }}">
                                 <button type="submit" class="btn btn-outline-danger btn-sm">Supprimer</button>
                             </form>

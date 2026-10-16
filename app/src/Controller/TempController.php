@@ -22,7 +22,7 @@ final class TempController extends AbstractController
         $this->denyAdminAccess();
 
         $pagination = $paginator->paginate(
-            $tempRepository->findBy([], ['releveAT' => 'DESC']),
+            $tempRepository->createLatestQuery(),
             $request->query->getInt('page', 1),
             8
         );
@@ -85,7 +85,7 @@ final class TempController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $pagination = $paginator->paginate(
-            $tempRepository->findBy([], ['releveAT' => 'DESC']),
+            $tempRepository->createLatestQuery(),
             $request->query->getInt('page', 1),
             8
         );

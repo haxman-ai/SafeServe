@@ -67,9 +67,9 @@ final class MenuController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $form = $this->createForm(MenuType::class, $menu);
-        $form->get('entree')->setData($menu->getPlatsByType('entree')->first()?->getName());
-        $form->get('plat')->setData($menu->getPlatsByType('plat')->first()?->getName());
-        $form->get('dessert')->setData($menu->getPlatsByType('dessert')->first()?->getName());
+        $form->get('entree')->setData($this->getPlatName($menu, 'entree'));
+        $form->get('plat')->setData($this->getPlatName($menu, 'plat'));
+        $form->get('dessert')->setData($this->getPlatName($menu, 'dessert'));
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -110,17 +110,25 @@ final class MenuController extends AbstractController
         }
     }
 
+    private function getPlatName(Menu $menu, string $type): ?string
+    {
+        $plat = $menu->getPlatsByType($type)->first();
+
+        return $plat instanceof Plat ? $plat->getName() : null;
+    }
+
     #[Route('/menu/{id}/delete', name: 'app_menu_delete', methods: ['POST'])]
     public function delete(Menu $menu, Request $request, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $weekOffset = $request->query->getInt('semaine', 0);
 
         if ($this->isCsrfTokenValid('delete-menu-' . $menu->getId(), $request->request->get('_token'))) {
             $em->remove($menu);
             $em->flush();
         }
 
-        return $this->redirectToRoute('app_menu');
+        return $this->redirectToRoute('app_menu', ['semaine' => $weekOffset]);
     }
 
     

@@ -34,7 +34,7 @@ class MenuRepository extends ServiceEntityRepository
     public function getWeekBounds(int $offset): array
     {
         $monday = new \DateTime('monday this week');
-        $monday->modify("{$offset} week");
+        $monday->setTime(0, 0, 0)->modify("{$offset} week");
         $friday = clone $monday;
         $friday->modify('+4 days')->setTime(23, 59, 59);
 
