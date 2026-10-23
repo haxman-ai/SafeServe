@@ -3,45 +3,51 @@
 
 {% block body %}
 <div class="container mt-4">
-    <div class="d-flex justify-content-center align-items-center mb-3">
-        <h4 class="mb-0">Feuille de temperatures</h4>
+    <div class="page-heading mb-4">
+        <div>
+            <p class="page-eyebrow mb-1">Suivi HACCP</p>
+            <h1 class="h3 mb-1">Relevés de températures</h1>
+            <p class="text-body-secondary mb-0">Consultez les dernières mesures et leur conformité.</p>
+        </div>
     </div>
 
-    <div class="table-responsive-sm">
-        <table class="table table-bordered border border-warning table table-hover">
+    <div class="table-card">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 temperature-table">
             <thead>
-                <tr class="table-active">
-                    <th>Conformités</th>
+                <tr>
+                    <th scope="col">Conformité</th>
                     <th>Plat</th>
-                    <th>Températures</th>
+                    <th>Température</th>
                     <th>Heure</th>
                     <th>Date</th>
-                    <th>cuisinier</th>
+                    <th>Cuisinier</th>
                 </tr>
             </thead>
             <tbody>
                 {% for t in temp %}
-                    <tr class="table-active">
+                    <tr class="{{ conformites[t.id] ? 'temperature-row--ok' : 'temperature-row--alert' }}">
                         <td>
                             {% if conformites[t.id] %}
-                                <span class="badge bg-success">conforme</span>
+                                <span class="badge rounded-pill text-bg-success"><span aria-hidden="true">✓</span> Conforme</span>
                             {% else %}
-                                <span class="badge bg-danger">non conforme</span>
+                                <span class="badge rounded-pill text-bg-danger"><span aria-hidden="true">!</span> Non conforme</span>
                             {% endif %}
                         </td>
                         <td>{{ t.plat }}{{ platMacros.emoji(t.plat.type) }}</td>
-                        <td>{{ t.temperature }}</td>
+                        <td class="temperature-value">{{ t.temperature }} <span>°C</span></td>
                         <td>{{ t.releveAT|date('H:i') }}</td>
                         <td>{{ t.releveAT|date('d/m/Y') }}</td>
                         <td>{{ t.user.email }}</td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="6">Aucune température enregistrée.</td>
+                        <td colspan="6" class="empty-state">Aucune température enregistrée pour le moment.</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+      </div>
     </div>
 
     {{ knp_pagination_render(temp) }}

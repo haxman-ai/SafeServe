@@ -76,6 +76,8 @@ final class TempController extends AbstractController
 
         return $this->render('temp/menu-semaine.html.twig', [
             'menu' => $weekMenus,
+            'semaineDebut' => $monday,
+            'semaineFin' => $friday,
         ]);
     }
 

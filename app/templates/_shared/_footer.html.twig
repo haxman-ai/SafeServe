@@ -1,16 +1,16 @@
-<footer class="bg-primary mt-auto py-2" data-bs-theme="dark">
+<footer class="site-footer mt-auto" data-bs-theme="dark">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-12 col-md-4 text-center text-md-start">
-                <span class="fw-bold fs-5">
-                    <span style="color: #28a745;">safe</span><span class="text-white">serv</span>
+                <span class="site-brand site-brand--footer fw-bold fs-5">
+                    <span class="site-brand__safe">safe</span><span class="site-brand__serv">serv</span>
                 </span>
-                <div class="text-muted small mt-1 ">&copy; {{ "now"|date("Y") }}<a href="{{ asset('mentions-legales.pdf') }}"> Mentions légales </a> </div>
+                <div class="site-footer__meta small mt-1">&copy; {{ "now"|date("Y") }} · <a href="{{ asset('mentions-legales.pdf') }}">Mentions légales</a></div>
             </div>
             <div class="col-12 col-md-4  text-center">
             </div>
             <div class="col-12 col-md-4 text-center text-md-end">
-                <span class="text-muted small">Version 1.0</span>
+                <span class="site-footer__meta small">Version 1.0</span>
             </div>
         </div>
     </div>

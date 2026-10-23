@@ -1,8 +1,8 @@
-<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+<nav class="navbar navbar-expand-lg site-navbar" data-bs-theme="dark">
     <div class="container">
-        <a class="navbar-brand" href="{{ path('app_home') }}">
-            <span style="color: #28a745;">safe</span>
-            <span style="color: white;">serv</span>
+        <a class="navbar-brand site-brand" href="{{ path('app_home') }}" aria-label="Safeserv, accueil">
+            <span class="site-brand__safe">safe</span><span class="site-brand__serv">serv</span>
+            <span class="site-brand__tagline">Suivi HACCP</span>
         </a>
 
         <button type="button" 
@@ -18,50 +18,50 @@
         <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link text-secondary-emphasis" 
+                    <a class="nav-link site-nav-link"
                        href="/guide-hygiene-haccp-2021.pdf" 
-                       target="_blank">
+                       target="_blank" rel="noopener noreferrer">
                         Documentation
                     </a>
                 </li>
             </ul>
 
             {% if app.user %}
-                <a href="{{ logout_path() }}"class="btn btn-outline-secondary btn-sm">
+                <a href="{{ logout_path() }}" class="btn btn-outline-light btn-sm">
                     Déconnexion
                 </a>
             {% else %}
                 <div class="d-flex">
-                    <a href="{{ path('app_login') }}" class="btn btn-outline-success btn-sm">
+                    <a href="{{ path('app_login') }}" class="btn btn-outline-light btn-sm">
                         Connexion
                     </a>
-                    <a href="{{ path('app_register') }}" class="btn btn-outline-success btn-sm ms-2">
+                    <a href="{{ path('app_register') }}" class="btn btn-light btn-sm ms-2">
                         Enregistrement
                     </a>
                 </div>
             {% endif %}
                {% if is_granted('ROLE_USER') and not  is_granted ('ROLE_ADMIN') %}
-                <div class="d-flex">
-                    <a href="{{ path('app_temp') }}" class="btn btn-outline-warning btn-sm ms-2">
+                <div class="site-nav-actions">
+                    <a href="{{ path('app_temp') }}" class="btn btn-outline-light btn-sm">
                         Temperatures
                     </a>
                 </div>
-                <div class="d-flex">
-                    <a href="{{path('app_temp_menu')}}"class="btn btn-outline-warning btn-sm ms-2">
-                        Menu-du-jour
+                <div class="site-nav-actions">
+                    <a href="{{ path('app_temp_menu') }}" class="btn btn-outline-light btn-sm">
+                        Menus de la semaine
                     </a>
                 </div>
             {% endif %}
 
             {% if is_granted('ROLE_ADMIN') %}
-                <div class="d-flex">
-                    <a href="{{ path('app_menu') }}" class="btn btn-outline-info btn-sm ms-2">
+                <div class="site-nav-actions">
+                    <a href="{{ path('app_menu') }}" class="btn btn-outline-light btn-sm">
                         Menu
                     </a>
                 </div>
-                <div class="d-flex">
-                    <a href="{{path('app_conform')}}" class="btn btn-outline-info btn-sm ms-2">
-                    conformités
+                <div class="site-nav-actions">
+                    <a href="{{ path('app_conform') }}" class="btn btn-outline-light btn-sm">
+                    Conformités
                     </a>
                 </div>
             {% endif %}
